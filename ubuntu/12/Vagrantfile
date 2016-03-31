@@ -6,18 +6,20 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision 'shell', inline: <<-SHELL
     sudo bash
+    apt-get install -y curl
+    echo 'deb     "http://ppa.launchpad.net/brightbox/ruby-ng/ubuntu" precise main' > /etc/apt/sources.list.d/ruby-ng.list
+    curl "http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0xF5DA5F09C3173AA6" | apt-key add -
     apt-get update
     apt-get upgrade -y
-    apt-get install -y curl
+    apt-get install -y ruby2.2 ruby2.2-dev
     curl -L https://www.opscode.com/chef/install.sh | sudo bash -s -- -v 11.18.12
-    export PATH="/opt/chef/embedded/bin/:$PATH"
     gem install chef-sugar --no-rdoc --no-ri
     export BUSSER_ROOT="/opt/busser"
     export GEM_HOME="/opt/busser/gems"
     export GEM_PATH="/opt/busser/gems"
     export GEM_CACHE="/opt/busser/gems/cache"
-    /opt/chef/embedded/bin/gem install busser --no-rdoc --no-ri
-    /opt/chef/embedded/bin/gem install serverspec --no-rdoc --no-ri
+    gem install busser --no-rdoc --no-ri
+    gem install serverspec --no-rdoc --no-ri
     /opt/busser/gems/bin/busser setup
     /opt/busser/gems/bin/busser plugin install busser-serverspec
     mkdir /opt/busser/suites
